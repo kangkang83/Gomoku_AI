@@ -1,0 +1,196 @@
+BỘ GIÁO DỤC VÀ ĐÀO TẠO
+TRƯỜNG ĐẠI HỌC CÔNG NGHỆ SÀI GÒN
+KHOA CÔNG NGHỆ THÔNG TIN
+
+ĐỒ ÁN TIN HỌC
+XÂY DỰNG GAME CỜ CARO (GOMOKU) VỚI AI
+SỬ DỤNG THUẬT TOÁN MINIMAX VÀ CẮT TỈA ALPHA-BETA
+Giảng viên hướng dẫn: Đoàn Thế Thảo
+Sinh viên thực hiện: Trần Kỳ Anh
+MSSV: DH52200339
+Lớp: D22_TH07
+
+
+TP. HỒ CHÍ MINH - NĂM 2025
+
+MỤC LỤC 
+
+
+MỤC LỤC	2
+NỘI DUNG CHI TIẾT	3
+LỜI MỞ ĐẦU	3
+CHƯƠNG 1: CƠ SỞ LÝ THUYẾT	4
+1. Tổng quan về Cờ Caro (Gomoku)	4
+2. Ngôn ngữ C++ và Thư viện SFML	4
+3. Thuật toán Minimax và Alpha-Beta	4
+CHƯƠNG 2: PHÂN TÍCH VÀ THIẾT KẾ HỆ THỐNG	5
+1. Phân tích yêu cầu (Business Analysis)	5
+Quy trình nghiệp vụ:	5
+2. Kiến trúc phần mềm (Mô hình MVC Rút gọn)	5
+View (Lớp View):	5
+Controller (Lớp game):	5
+3. Thiết kế thuật toán Heuristic (Hàm lượng giá)	6
+Ý NGHĨA CHIẾN THUẬT :	6
+4. Tối ưu hóa Alpha-Beta Pruning và Move Ordering	8
+CHƯƠNG 3: THIẾT KẾ GIAO DIỆN (GUI)	9
+1.Màu sắc chủ đạo:	9
+2.Bố cục:	9
+3.Trải nghiệm người dùng (UX):	9
+CHƯƠNG 4: Giao diện GAME-PLAY.	11
+KHỞI ĐỘNG TRÒ CHƠI (PLAYER ĐI TRƯỚC)	11
+GIAO DIỆN KHI NGƯỜI CHƠI THẮNG	12
+GIAO DIỆN KHI MÁY THẮNG	12
+CHƯƠNG 5: KẾT QUẢ VÀ ĐÁNH GIÁ	13
+1. Kết quả đạt được	13
+2. Hạn chế	13
+3. Hướng phát triển	13
+KẾT LUẬN	14
+
+
+
+
+
+NỘI DUNG CHI TIẾT
+ LỜI MỞ ĐẦU
+1.1. Lý do chọn đề tài
+Trí tuệ nhân tạo (AI) đang là xu hướng công nghệ chủ đạo hiện nay. Việc áp dụng AI vào các trò chơi đối kháng (Zero-sum games) như Cờ Vua, Cờ Tướng, hay Cờ Caro là bài toán kinh điển để rèn luyện tư duy thuật toán. Cờ Caro (Gomoku) có luật chơi đơn giản nhưng không gian trạng thái (state space) rất lớn, đòi hỏi sự tối ưu hóa cao trong lập trình để máy tính có thể phản hồi nhanh chóng.
+1.2. Mục tiêu đồ án
+-Xây dựng thành công ứng dụng Game Cờ Caro trên máy tính.
+-Áp dụng ngôn ngữ C++ và tư duy lập trình hướng đối tượng (OOP).
+-Sử dụng thư viện SFML để thiết kế giao diện đồ họa trực quan.
+-Cài đặt thành công thuật toán Minimax kết hợp cắt tỉa Alpha-Beta để AI có khả năng đánh bại hoặc cầm hòa người chơi nghiệp dư.
+
+
+
+CHƯƠNG 1: CƠ SỞ LÝ THUYẾT
+1. Tổng quan về Cờ Caro (Gomoku)
+Bàn cờ: Lưới ô vuông kích thước 15x15 (chuẩn quốc tế) hoặc 19x19
+Quân cờ: Hai bên Đen (đi trước) và Trắng (đi sau).
+Luật thắng: Bên nào tạo được chuỗi 5 quân liên tiếp theo hàng ngang, dọc hoặc chéo là thắng.
+2. Ngôn ngữ C++ và Thư viện SFML
+C++: Được chọn vì tốc độ xử lý cực nhanh, khả năng quản lý bộ nhớ thủ công, rất phù hợp cho các bài toán đệ quy sâu như AI.
+nguồn mở, hỗ trợ vẽ đồ họa 2D, xử lý sự kiện chuột/phím một cách đơn giản và hiệu quả.
+3. Thuật toán Minimax và Alpha-Beta
+Minimax: Là thuật toán đệ quy dùng để chọn nước đi tối ưu.
+MAX (AI): Luôn tìm cách tối đa hóa điểm số của mình.
+MIN (Người chơi): AI giả định người chơi sẽ luôn tìm cách tối thiểu hóa điểm số của AI (đánh nước hay nhất để chặn AI).
+Alpha-Beta Pruning: Kỹ thuật tối ưu hóa cho Minimax. Nếu AI phát hiện một nhánh đi dẫn đến kết quả tồi tệ hơn một nhánh đã tìm thấy trước đó, nó sẽ cắt bỏ nhánh đó ngay lập tức, giúp giảm hàng triệu phép tính thừa.
+
+
+
+ CHƯƠNG 2: PHÂN TÍCH VÀ THIẾT KẾ HỆ THỐNG
+1. Phân tích yêu cầu (Business Analysis)
+Quy trình nghiệp vụ:
+1.Khởi động game -> Hiển thị bàn cờ trống.
+2.Người chơi (Player) click chuột vào ô trống -> Hệ thống vẽ quân Đen -> Kiểm tra thắng thua.
+3.Nếu chưa thắng -> Chuyển lượt cho Máy (AI).
+4.Máy tính toán nước đi tốt nhất -> Vẽ quân Trắng -> Kiểm tra thắng thua.
+5.Lặp lại cho đến khi có bên thắng hoặc hòa (kín bàn cờ).
+2. Kiến trúc phần mềm (Mô hình MVC Rút gọn) 
+Hệ thống được thiết kế theo mô hình MVC để tách biệt hoàn toàn giữa xử lý logic và hiển thị đồ họa, giúp mã nguồn dễ bảo trì và nâng cấp:
+Model (Lớp Board và AI): * Board: Quản lý mảng hai chiều grid[BOARD_SIZE][BOARD_SIZE] để lưu trạng thái bàn cờ. Chịu trách nhiệm kiểm tra tính hợp lệ của nước đi và điều kiện thắng checkWin.
+View (Lớp View):
+Sử dụng SFML RenderWindow.
+Chịu trách nhiệm tải tài nguyên (nếu có), vẽ lưới (Grid), vẽ quân cờ (CircleShape).
+Hiển thị hiệu ứng highlight nước đi cuối cùng.
+Controller (Lớp game): 
+Là trung tâm điều phối, quản lý vòng lặp trò chơi
+Vòng lặp chính của game (Game Loop).
+Nhận sự kiện click chuột từ View, gửi tọa độ sang Model để xử lý.
+Điều phối lượt chơi (Turn-based management).
+
+Thành phần	File tương ứng	Chức năng chính
+Model	Board.cpp, AI.cpp, Global.h	Quản lý dữ liệu bàn cờ 2, tính toán logic thắng/thua 3 và thực hiện thuật toán AI.
+View	View.cpp	Đảm nhận việc vẽ lưới, quân cờ và các hiệu ứng đồ họa bằng thư viện SFML4444.
+Controller	Game.cpp, main.cpp	Quản lý vòng lặp Game (Game Loop) 5, tiếp nhận sự kiện chuột/phím và điều phối giữa Model và View6.
+
+3. Thiết kế thuật toán Heuristic (Hàm lượng giá)
+Đây là "trí thông minh" của AI. Thay vì chỉ nhìn thắng/thua, AI chấm điểm thế cờ dựa trên các mẫu (pattern):
+Thế cờ	Số quân	Trạng thái	Điểm số (Heuristic)
+Win 5	5	Thắng tuyệt đối	100,000,000
+Open 4	4	Không bị chặn	1,000,000
+Blocked 4	4	Bị chặn 1 đầu	100,000
+Open 3	3	Không bị chặn	50,000
+Blocked 3	3	Bị chặn 1 đầu	1,000
+Open 2	2	Không bị chặn	500
+Ý NGHĨA CHIẾN THUẬT :
+Win 5 : Thắng tuyệt đối -> Kết thúc trò chơi.
+Open 4 : Không bị chặn -> Chắc chắn thắng ở lượt sau.
+Blocked 4 : Bị chặn 1 đầu -> Ép đối thủ phải chặn ngay.
+Open 3 : Không bị chặn -> Tiềm năng tạo ra Open 4.
+Blocked 3 : Bị chặn 1 đầu -> Thế cờ tấn công trung bình.
+Open 2 : Không bị chặn -> Khởi đầu cho một chuỗi tấn công.
+
+Chiến thuật phòng thủ: Trong hàm Minimax, điểm của Người chơi được nhân hệ số 15
+(score = Score (AI) - Score (Player) * 15).
+Phòng thủ cực cao : Giúp AI tối đa hóa chỉ số phòng thủ.
+Điều này khiến AI có xu hướng ưu tiên chặn nước nguy hiểm của người chơi hơn là tấn công mạo hiểm.
+
+
+
+
+4. Tối ưu hóa Alpha-Beta Pruning và Move Ordering
+Để AI chạy mượt ở độ sâu 5, áp dụng kỹ thuật Sắp xếp nước đi (Move Ordering):
+-Trước khi chạy Minimax, AI dùng hàm evaluateMove để đánh giá nhanh tất cả các ô trống xung quanh.
+-Các ô có tiềm năng cao nhất sẽ được đưa vào duyệt trước.
+-Kết hợp với cắt tỉa Alpha-Beta, kỹ thuật này giúp loại bỏ hàng triệu nhánh tính toán thừa, giúp AI phản hồi trong thời gian ngắn dù ở độ sâu lớn.
+
+
+
+CHƯƠNG 3: THIẾT KẾ GIAO DIỆN (GUI)
+Giao diện được thiết kế theo phong cách tối giản  (Minimalism) nhưng hiện đại:
+1.Màu sắc chủ đạo:
+Nền: Màu vàng gỗ (#EBC896 - RGB: 235, 200, 150) tạo cảm giác bàn cờ thật.
+Quân cờ: Đen (Black) và Trắng (White) viền đen, mô phỏng quân cờ Vây (Go).
+2.Bố cục:
+Lưới 15x15 ô vuông, kích thước mỗi ô 40px.
+Kích thước cửa sổ: 600x600px.
+3.Trải nghiệm người dùng (UX):
+Highlight: Có chấm đỏ nhỏ đánh dấu nước đi vừa đánh, giúp người chơi dễ theo dõi diễn biến trận đấu.
+Anti-aliasing: Bật khử răng cưa (Level 8) để quân cờ tròn và mịn.
+
+
+
+
+
+
+
+
+
+
+
+
+CHƯƠNG 4: Giao diện GAME-PLAY.
+
+
+
+
+KHỞI ĐỘNG TRÒ CHƠI (PLAYER ĐI TRƯỚC)
+
+
+
+
+GIAO DIỆN KHI NGƯỜI CHƠI THẮNG
+
+
+
+GIAO DIỆN KHI MÁY THẮNG
+
+
+CHƯƠNG 5: KẾT QUẢ VÀ ĐÁNH GIÁ
+1. Kết quả đạt được
+ Xây dựng thành công AI với độ sâu Depth = 5, cho khả năng đánh chặn thông minh.
+ Giao diện trực quan, hỗ trợ tính năng Reset game bằng phím 'R'.
+ Tối ưu hóa vùng tìm kiếm: AI chỉ xét các ô trống lân cận quân cờ đã đánh (Empty Neighbors) thay vì quét toàn bộ bàn cờ 15x15.
+2. Hạn chế
+Tốc độ: Ở độ sâu (Depth) > 6, thời gian suy nghĩ của AI tăng lên đáng kể (có thể mất 5-10 giây) do số lượng nhánh tính toán quá lớn.
+Khai cuộc: AI chưa có thư viện khai cuộc (Opening Book), nên những nước đi đầu tiên thường đánh vào giữa bàn cờ một cách máy móc.
+Luật chơi: Chưa áp dụng các luật chuyên sâu của Gomoku quốc tế (như luật Renju cấm quân Đen đi nước đôi 3-3).
+3. Hướng phát triển
+Tối ưu thuật toán: Áp dụng Zobrist Hashing để lưu trữ các thế cờ đã tính toán (Transposition Table), tránh tính lại những thế cờ trùng lặp.
+Nâng cao chiến thuật: Cài đặt thuật toán VCF (Victory by Continuous Fours) để tìm đường thắng nhanh hơn.
+Mở rộng giao diện: Thêm menu Start/Exit, nút Undo (Đi lại), và bảng chọn độ khó.
+Mở rộng Menu: Thêm màn hình bắt đầu và tùy chọn độ sâu tìm kiếm (Dễ/Trung bình/Khó)
+
+KẾT LUẬN
+Đồ án đã hoàn thành mục tiêu đề ra là xây dựng một game Cờ Caro hoàn chỉnh với đối thủ máy tính thông minh. Qua quá trình thực hiện, em đã nắm vững kiến thức về ngôn ngữ C++, lập trình đồ họa với SFML và đặc biệt là tư duy thuật toán trong Trí tuệ nhân tạo. Đây là nền tảng vững chắc để em tiếp tục nghiên cứu các hệ thống AI phức tạp hơn trong tương lai.
